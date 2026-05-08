@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>숫자 퍼즐</title>
+<style>
+body{
+  font-family: Arial;
+  background:#222;
+  color:white;
+  text-align:center;
+}
+
+#board{
+  width:320px;
+  margin:20px auto;
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:5px;
+}
+
+.tile{
+  width:75px;
+  height:75px;
+  background:green;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  font-weight:bold;
+  cursor:pointer;
+  border-radius:10px;
+}
+
+.empty{ background:#111; }
+
+button{
+  padding:10px;
+  font-size:16px;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>숫자 퍼즐</h1>
+<button onclick="shuffle()">섞기</button>
+
+<div id="board"></div>
+
+<script>
+let tiles = [];
+
+const board = document.getElementById("board");
+
+function init(){
+  tiles = [];
+  for(let i=1;i<=15;i++) tiles.push(i);
+  tiles.push(0);
+  render();
+}
+
+function render(){
+  board.innerHTML = "";
+
+  tiles.forEach((num,i)=>{
+    let div = document.createElement("div");
+
+    if(num===0){
+      div.className="tile empty";
+    }else{
+      div.className="tile";
+      div.textContent=num;
+      div.onclick=()=>move(i);
+    }
+
+    board.appendChild(div);
+  });
+}
+
+function move(i){
+  let empty = tiles.indexOf(0);
+
+  if(
+    (i===empty-1 && empty%4!==0) ||
+    (i===empty+1 && i%4!==0) ||
+    i===empty-4 || i===empty+4
+  ){
+    [tiles[i],tiles[empty]]=[tiles[empty],tiles[i]];
+    render();
+  }
+}
+
+function shuffle(){
+  for(let i=0;i<500;i++){
+    let empty = tiles.indexOf(0);
+    let moves = [];
+
+    if(empty%4!==0) moves.push(empty-1);
+    if(empty%4!==3) moves.push(empty+1);
+    if(empty>3) moves.push(empty-4);
+    if(empty<12) moves.push(empty+4);
+
+    let m = moves[Math.floor(Math.random()*moves.length)];
+
+    [tiles[m],tiles[empty]]=[tiles[empty],tiles[m]];
+  }
+
+  render();
+}
+
+init();
+</script>
+
+</body>
+</html>
